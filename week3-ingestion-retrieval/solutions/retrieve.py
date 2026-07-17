@@ -4,6 +4,13 @@ stored chunks by comparing embedding vectors.
 Try it directly:
 
     python retrieve.py "How often should I descale the machine?"
+
+How it works: the question is embedded with the same model that embedded
+the documents, then compared against every stored chunk with cosine
+similarity (1.0 = same meaning, near 0 = unrelated). Brute-force
+comparison is completely fine at our scale of a few hundred chunks; with
+millions of chunks you would switch to a dedicated vector database or a
+SQLite vector extension — same idea, faster lookup.
 """
 
 import json
@@ -17,18 +24,13 @@ from foundry_client import get_client, resolve_model_id
 
 
 def cosine_similarity(a, b):
-    """How similar two vectors point: 1.0 = same meaning, near 0 = unrelated."""
+    """Return how similar two vectors point (1.0 same, ~0 unrelated)."""
     a, b = np.asarray(a), np.asarray(b)
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
 
 
 def get_top_chunks(client, embed_model_id, question, k=config.TOP_K):
-    """Embed the question, compare it against every stored chunk, and return
-    the k best matches as (source, content, score) tuples, best first.
-
-    Brute-force comparison is completely fine at our scale (a few hundred
-    chunks). With millions of chunks you would switch to a dedicated vector
-    database or a SQLite vector extension — same idea, faster lookup."""
+    """Return the k best-matching (source, content, score) tuples, best first."""
     if not config.DB_PATH.exists():
         raise SystemExit(f"Database not found: {config.DB_PATH}. Run ingest.py first.")
 

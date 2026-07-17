@@ -2,12 +2,16 @@
 
     python evaluate.py
 
-Two kinds of test questions:
-  - answerable:   the answer IS in sample-docs — the bot should state it
-  - unanswerable: the answer is NOT in the docs — the bot should say the
+TEST_QUESTIONS holds (question, kind) pairs of two kinds:
+- "answerable":   the answer IS in sample-docs — the bot should state it
+- "unanswerable": the answer is NOT in the docs — the bot should say the
                   fallback sentence instead of making something up
 
-The unanswerable checks are automatic; answerable ones still need your eyes.
+The unanswerable checks are automatic; answerable ones still need your
+eyes. Fallback detection matches loosely on the distinctive tail of the
+sentence ("have that information in my documents") rather than the exact
+full text, because small local models sometimes garble the contraction
+"don't" in their output.
 """
 
 import time
@@ -17,7 +21,6 @@ from chat import FALLBACK_ANSWER, answer_query
 from foundry_client import get_client, resolve_model_id
 
 TEST_QUESTIONS = [
-    # (question, "answerable" | "unanswerable")
     ("How often should I replace the PureFlow F2 filter cartridge?", "answerable"),
     ("What does error code E03 mean on the Aurora X1?", "answerable"),
     ("What grinder setting should I use for French press?", "answerable"),
@@ -43,9 +46,6 @@ def main():
         answer, chunks = answer_query(client, chat_id, embed_id, question)
         elapsed = time.perf_counter() - start
 
-        # Match loosely: small local models sometimes garble the contraction
-        # ("don't" comes out as something else), so we detect the fallback by
-        # its distinctive tail rather than the exact full sentence.
         used_fallback = "have that information in my documents" in answer.lower()
         if kind == "unanswerable":
             unanswerable_total += 1

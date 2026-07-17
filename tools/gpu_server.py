@@ -1,10 +1,10 @@
 """Optional GPU accelerator for the course (NVIDIA GPUs).
 
-Why this exists: the Foundry Local CLI daemon (0.10.2) fails to register GPU
-execution providers on some machines and then only serves CPU model builds.
-This script uses the foundry-local-sdk instead: it registers the CUDA
-execution provider, downloads/loads the GPU builds of the course models, and
-serves the same OpenAI-compatible API on port 5273.
+Why this exists: the Foundry Local CLI daemon (0.10.2) fails to register
+GPU execution providers on some machines and then only serves CPU model
+builds. This script uses the foundry-local-sdk instead: it registers the
+CUDA execution provider, downloads/loads the GPU builds of the course
+models, and serves the same OpenAI-compatible API on port 5273.
 
 Usage (leave it running in its own terminal):
 
@@ -15,6 +15,11 @@ Every week's code picks it up automatically: foundry_client.py checks for
 this server first and prefers it over the CPU daemon. Stop it with Ctrl-C
 and the code falls back to the CPU daemon on the next run.
 
+Configuration:
+- MODELS: keep in sync with config.py if you changed the course models.
+- EP: CUDAExecutionProvider is for NVIDIA; on non-NVIDIA GPUs try
+  "WebGpuExecutionProvider" (experimental).
+
 Measured on an RTX 5070 Ti: ~180 tokens/s vs ~20 tokens/s on CPU.
 """
 
@@ -24,10 +29,8 @@ from foundry_local_sdk import Configuration, FoundryLocalManager
 
 PORT = 5273
 
-# Keep in sync with config.py if you changed the course models.
 MODELS = ["phi-3.5-mini", "qwen3-embedding-0.6b"]
 
-# CUDAExecutionProvider = NVIDIA. On non-NVIDIA GPUs try "WebGpuExecutionProvider".
 EP = "CUDAExecutionProvider"
 
 

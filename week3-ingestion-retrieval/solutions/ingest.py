@@ -4,6 +4,23 @@ compute an embedding for each chunk, and store everything in SQLite.
 Run it once (and again whenever the documents change):
 
     python ingest.py
+
+How chunking works here:
+- The document is split at markdown headings, then paragraphs within a
+  section are merged up to roughly MAX_CHUNK_CHARS per chunk. Small chunks
+  retrieve precisely; large chunks keep related sentences together.
+- Every chunk starts with a "[document title - section heading]" label, so
+  a chunk still makes sense on its own — both to the embedding model
+  (better retrieval) and to the LLM (better answers). Without the label, a
+  bare list like the error codes never mentions what product it belongs
+  to, and retrieval misses it.
+
+Database details:
+- Table chunks(id, source, content, embedding): source is the filename the
+  chunk came from (used for citations), and embedding is the vector stored
+  as a JSON list so you can open the database and inspect it.
+- The table is dropped and recreated on every run, so re-ingesting never
+  duplicates rows.
 """
 
 import json
@@ -27,11 +44,8 @@ def split_sections(text):
 
 
 def chunk_text(text, max_chars=config.MAX_CHUNK_CHARS):
-    """Split a markdown document into chunks that follow its heading
-    structure. Every chunk starts with the document title and its section
-    heading, so a chunk still makes sense on its own — both to the embedding
-    model (better retrieval) and to the LLM (better answers). Within a long
-    section, paragraphs are merged up to roughly max_chars per chunk."""
+    """Split a markdown document into labeled chunks that follow its
+    heading structure."""
     first_line = text.strip().splitlines()[0]
     title = first_line.lstrip("#").strip() if first_line.startswith("#") else ""
 
@@ -52,15 +66,15 @@ def chunk_text(text, max_chars=config.MAX_CHUNK_CHARS):
 
 
 def create_table(db):
-    """Start fresh each run so re-ingesting never duplicates rows."""
+    """Recreate the chunks table so re-runs start fresh."""
     db.execute("DROP TABLE IF EXISTS chunks")
     db.execute(
         """
         CREATE TABLE chunks (
             id        INTEGER PRIMARY KEY,
-            source    TEXT NOT NULL,   -- which document the chunk came from
-            content   TEXT NOT NULL,   -- the chunk text itself
-            embedding TEXT NOT NULL    -- the vector, stored as a JSON list
+            source    TEXT NOT NULL,
+            content   TEXT NOT NULL,
+            embedding TEXT NOT NULL
         )
         """
     )

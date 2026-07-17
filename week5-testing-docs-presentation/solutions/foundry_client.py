@@ -5,11 +5,23 @@ This module finds that service (starting it if needed), makes sure a model
 is loaded into memory, and hands back a standard `openai` client pointed at
 it. No cloud, no API key, no internet.
 
-Note: Microsoft's older tutorials use `from foundry_local import
-FoundryLocalManager`. That API changed in foundry-local-sdk 1.x, so this
-course talks to the service directly through the `foundry` CLI and the
-OpenAI-compatible endpoint instead — the approach below works with
-Foundry Local 0.10+ and needs only the `openai` package.
+Notes:
+- Microsoft's older tutorials use `from foundry_local import
+  FoundryLocalManager`. That API changed in foundry-local-sdk 1.x, so this
+  course talks to the service directly through the `foundry` CLI and the
+  OpenAI-compatible endpoint instead. The approach below works with
+  Foundry Local 0.10+ and needs only the `openai` package.
+- GPU_SERVER_URL is served by the optional tools/gpu_server.py. When that
+  server is running, get_service_url() prefers it and resolve_model_id()
+  picks the CUDA build of each model, so all course code automatically
+  uses the GPU. Stop the GPU server and everything falls back to the CPU
+  daemon on the next run.
+- The CPU daemon's /v1/models endpoint lists every CACHED model, including
+  ones not currently loaded in memory, so resolve_model_id() always asks
+  the daemon to load first (a fast no-op if already loaded; the first time
+  it also downloads the model).
+- The foundry CLI prints UTF-8 progress symbols, so its output is decoded
+  as UTF-8 regardless of the console's own encoding.
 """
 
 import json
@@ -18,11 +30,8 @@ import urllib.request
 
 from openai import OpenAI
 
-# Served by the optional tools/gpu_server.py (GPU machines). When it is
-# running, all course code automatically uses the GPU instead of the CPU.
 GPU_SERVER_URL = "http://127.0.0.1:5273"
 
-# Set by get_service_url(): True when we're talking to the GPU server.
 _gpu_mode = False
 
 
@@ -33,8 +42,6 @@ def _run_foundry(*args):
             ["foundry", *args],
             capture_output=True,
             check=True,
-            # The foundry CLI prints UTF-8 (progress symbols); decode it as
-            # such no matter what the console's own encoding is.
             encoding="utf-8",
             errors="replace",
         )
@@ -51,15 +58,15 @@ def _run_foundry(*args):
 
 
 def get_service_url():
-    """Return the base URL of the local service, starting the daemon if needed.
-    Prefers the optional GPU server (tools/gpu_server.py) when it is running."""
+    """Return the base URL of the local service, starting the daemon if
+    needed. Prefers the optional GPU server when it is running."""
     global _gpu_mode
     try:
         with urllib.request.urlopen(GPU_SERVER_URL + "/v1/models", timeout=0.5):
             _gpu_mode = True
             return GPU_SERVER_URL
     except OSError:
-        _gpu_mode = False  # GPU server not running - use the regular CPU daemon
+        _gpu_mode = False
 
     status = json.loads(_run_foundry("server", "status", "-o", "json"))
     if not status.get("running"):
@@ -88,7 +95,6 @@ def resolve_model_id(client, alias):
         ]
 
     if _gpu_mode:
-        # tools/gpu_server.py loads the GPU builds at startup; pick those.
         gpu = [i for i in matching_ids() if "cuda" in i.lower()]
         if gpu:
             return gpu[0]
@@ -97,9 +103,6 @@ def resolve_model_id(client, alias):
             f"Add it to MODELS in tools/gpu_server.py and restart the server."
         )
 
-    # CPU daemon. Note: its /v1/models endpoint lists every CACHED model,
-    # including ones not currently in memory - so always ask the daemon to
-    # load (a fast no-op if already loaded; downloads the model first time).
     print(f"Making sure model '{alias}' is loaded...")
     _run_foundry("model", "load", alias)
     cpu = [i for i in matching_ids() if "cuda" not in i.lower()]
