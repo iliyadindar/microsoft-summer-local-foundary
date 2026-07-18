@@ -13,8 +13,9 @@
 ## Pitfalls
 
 - **Losing the last chunk** in chunk_text — the classic bug (forgetting to
-  append `current` after the loop). Let them find it via the 25–45 count
-  check rather than telling them upfront.
+  append `current` after the loop). Let them find it via the 15–35 count
+  check rather than telling them upfront. (The reference solution produces
+  27; a dropped last chunk lands below the range.)
 - **Duplicate rows** after re-running ingestion — students who used
   `CREATE TABLE IF NOT EXISTS` without dropping/clearing first. Good teaching
   moment about idempotent scripts.

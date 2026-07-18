@@ -21,8 +21,10 @@
   shown in most tutorials (`FoundryLocalManager(alias)` is gone). That's why
   the course ships `foundry_client.py`. If a student finds an old tutorial,
   point them at the warning box in the week README.
-- **Low-spec laptops:** if `phi-3.5-mini` (2.5 GB) is too slow, swap
-  `qwen2.5-0.5b` (822 MB) into the config — everything else is unchanged.
+- **Low-spec laptops:** if `phi-3.5-mini` (2.5 GB) is too slow, swap in
+  `qwen2.5-0.5b` (822 MB) — everything else is unchanged. This week that
+  means the `MODEL` constant at the top of each script; from Week 3 on
+  there's a single `config.py` to edit instead.
 - The CLI subcommand is `foundry server` (older docs say `foundry service`).
 - **GPU machines:** Foundry Local 0.10.2's daemon often fails to register GPU
   execution providers and silently serves CPU-only builds. Students with

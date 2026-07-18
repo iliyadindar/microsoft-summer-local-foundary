@@ -4,7 +4,7 @@ Grounding a model in context is the heart of RAG. Feel the difference
 yourself before you build it in code.
 
 Use any chat AI you have access to (Copilot, ChatGPT, or your local
-`phi-3.5-mini` via `foundry chat phi-3.5-mini`).
+`phi-3.5-mini` via `foundry model run phi-3.5-mini`).
 
 ## Experiment 1 — Without vs. with context
 

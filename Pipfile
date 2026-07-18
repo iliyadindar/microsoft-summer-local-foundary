@@ -6,8 +6,6 @@ name = "pypi"
 [packages]
 openai = ">=2.0"
 numpy = ">=1.26"
+streamlit = ">=1.35"
 
 [dev-packages]
-
-[requires]
-python_version = "3.14"

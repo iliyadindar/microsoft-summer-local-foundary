@@ -56,7 +56,7 @@ Type a message, get a reply, then `/exit`. That conversation never left your lap
 ## 3. Your first program against a local model
 
 The repo provides [foundry_client.py](exercises/foundry_client.py) — read it
-top to bottom (it's ~80 lines). It does three things you'll rely on all month:
+top to bottom (it's ~115 lines). It does three things you'll rely on all month:
 finds the local service, returns an `openai` client pointed at it, and turns a
 friendly model alias like `phi-3.5-mini` into the exact id the service expects.
 

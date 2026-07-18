@@ -30,6 +30,14 @@ The fallback check is mechanical, so script it:
 every answer, auto-verifies that unanswerable questions get declined, and
 prints a report. Adapt it to your team's question set.
 
+Note how it detects a decline: it looks for the *phrase* `"have that
+information in my documents"`, not the exact fallback sentence. Small local
+models sometimes garble the contraction in "I don't have…" while getting the
+rest right. Matching a distinctive fragment tolerates that;
+matching the whole sentence would report false failures on answers that were
+actually correct. Keep this in mind when you adapt the fallback wording —
+change the sentence in `chat.py` and you must change the fragment here too.
+
 ## 2. Debugging: retrieval or generation?
 
 Every wrong answer has exactly two suspects. Find out which:
@@ -54,6 +62,15 @@ The final reference app upgrades the system prompt so every answer ends with
 its source — compare [solutions/chat.py](solutions/chat.py) with Week 4's
 version (it's a ~4-line diff, all in the prompt). Grounded + cited = the
 user can check the bot's homework.
+
+`chat.py` is the only file that changed this week; `evaluate.py` is the only
+one that's new. Everything else in [solutions/](solutions/) is byte-identical
+to Week 4 — including
+[solutions/streamlit_app.py](solutions/streamlit_app.py), which picks
+up citations for free, because the change lives in the prompt rather than in
+any interface code. If you took the Streamlit stretch goal in Week 4, it
+needs no edits this week; `streamlit run streamlit_app.py` makes for a
+better demo-day screen than a terminal.
 
 ## 4. Documentation
 

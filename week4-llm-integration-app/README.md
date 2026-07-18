@@ -36,6 +36,14 @@ Complete [exercises/chat_starter.py](exercises/chat_starter.py) — it wires
 `get_top_chunks()` into a chat completion. Test with the two built-in
 questions: one answerable, one not. Solution: [solutions/chat.py](solutions/chat.py).
 
+**First, bring Week 3 forward.** This week's `exercises/` folder has no
+`ingest.py` or `retrieve.py`, but `chat_starter.py` imports `get_top_chunks`
+from `retrieve` — copy your own working `config.py`, `ingest.py`, and
+`retrieve.py` from Week 3 into this folder before you run anything, or the
+import fails. (If Week 3 didn't come together, copy
+[week3's solutions](../week3-ingestion-retrieval/solutions/) instead so you
+aren't blocked.) Then run `python ingest.py` once to build `rag.db` here.
+
 ## 3. The interface
 
 Three options, in increasing order of effort:

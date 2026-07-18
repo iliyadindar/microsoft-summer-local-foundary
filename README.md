@@ -25,7 +25,9 @@ Each week folder contains:
 - `README.md` — the student-facing lesson: concepts, curated official
   resources, and exercises
 - `instructor-notes.md` — pacing, known pitfalls, discussion prompts
-- `exercises/` — starter files with TODOs (plus provided helpers)
+- `exercises/` — the week's hands-on work: starter `.py` files with TODOs and
+  provided helpers in Weeks 1–4; Week 5's is a written worksheet instead,
+  since that week is testing and documentation rather than new code
 - `solutions/` — a **complete runnable snapshot** of the project as of that
   week's milestone. Any week runs standalone; diff week N against N+1 to see
   exactly what was added.
@@ -34,7 +36,7 @@ Each week folder contains:
 
 ```
 # 1. Install prerequisites — see SETUP.md (Python 3.10+, Foundry Local)
-pip install -r requirements.txt
+pip install -r requirements.txt     # or: pipenv install && pipenv shell
 
 # 2. Run the finished assistant
 cd week4-llm-integration-app/solutions

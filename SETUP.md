@@ -57,6 +57,12 @@ pip install -r requirements.txt
 (Consider a virtual environment: `python -m venv .venv` then activate it —
 your instructor will demo this.)
 
+**Using pipenv instead?** The repo ships a `Pipfile` covering the same
+packages, so `pipenv install` then `pipenv shell` works as a drop-in
+alternative. Pick one path and stick with it — mixing the two in one
+checkout is a reliable way to confuse yourself about which interpreter is
+running your code.
+
 ## 5. Verify everything
 
 ```
@@ -98,7 +104,7 @@ GPUs, edit `EP` in the script to `"WebGpuExecutionProvider"` (experimental).
 |---------|-----|
 | `foundry` is not recognized | Open a NEW terminal; on Windows re-run the winget install if it persists |
 | Older docs mention `foundry service ...` | The command group is `foundry server ...` in current versions |
-| `pip install foundry-local-sdk` examples from tutorials fail | Expected — SDK 1.x changed its API. This course doesn't need the SDK; the provided `foundry_client.py` uses the CLI + `openai` package instead |
+| `pip install foundry-local-sdk` examples from tutorials fail | Expected — SDK 1.x changed its API. No course exercise needs the SDK; the provided `foundry_client.py` uses the CLI + `openai` package instead. (The optional GPU server above is the one exception that does use it.) |
 | First question takes forever | Model loading into RAM takes 10–30 s once per session; later answers take seconds |
-| Everything is slow | Edit `config.py`: set `CHAT_MODEL = "qwen2.5-0.5b"` |
+| Everything is slow | Week 3 onward: edit `config.py`, set `CHAT_MODEL = "qwen2.5-0.5b"`. Weeks 1–2 have no `config.py` — change the `MODEL` constant at the top of the script you're running |
 | `Database not found` | Run `python ingest.py` before `main.py` / `retrieve.py` |
