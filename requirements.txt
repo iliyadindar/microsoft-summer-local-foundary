@@ -2,8 +2,8 @@
 openai>=2.0
 numpy>=1.26
 
-# Optional — only for the Week 4 stretch-goal web UI:
-# streamlit>=1.35
+# Needed for the web UI (streamlit_app.py) in Weeks 4 and 5:
+streamlit>=1.35
 
 # Optional — only for tools/gpu_server.py (GPU acceleration, see SETUP.md):
 # foundry-local-sdk>=1.2
