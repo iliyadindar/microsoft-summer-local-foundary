@@ -8,7 +8,6 @@ models, and serves the same OpenAI-compatible API on port 5273.
 
 Usage (leave it running in its own terminal):
 
-    pip install foundry-local-sdk
     python gpu_server.py
 
 Every week's code picks it up automatically: foundry_client.py checks for

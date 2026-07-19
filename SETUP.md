@@ -87,10 +87,12 @@ daemon fails to register GPU support on some machines (it then lists only
 CPU builds in `foundry model list`), so the course ships a workaround:
 
 ```
-pip install foundry-local-sdk
 cd tools
 python gpu_server.py
 ```
+
+(`foundry-local-sdk` is already in `requirements.txt`, so no extra install
+step is needed.)
 
 First run downloads the CUDA runtime (~2 GB) plus GPU builds of the course
 models (~2.5 GB), then serves them on port 5273. **Leave it running in its
