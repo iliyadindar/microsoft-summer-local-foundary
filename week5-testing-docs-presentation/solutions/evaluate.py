@@ -17,7 +17,7 @@ full text, because small local models sometimes garble the contraction
 import time
 
 import config
-from chat import FALLBACK_ANSWER, answer_query
+from chat import answer_query
 from foundry_client import get_client, resolve_model_id
 
 TEST_QUESTIONS = [

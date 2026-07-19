@@ -15,8 +15,6 @@ The prompt has two parts:
 temperature=0.2 keeps the model factual and repeatable instead of creative.
 """
 
-import config
-from foundry_client import get_client, resolve_model_id
 from retrieve import get_top_chunks
 
 FALLBACK_ANSWER = "I don't have that information in my documents."
